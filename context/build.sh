@@ -10,6 +10,7 @@ echo "Script directory: ${path}"
 
 source export
 
-PARALLEL_MAKE="-j 3" BB_NUMBER_THREADS="4" bitbake -k ${reference_image}
+PARALLEL_MAKE="-j 4" BB_NUMBER_THREADS="4" bitbake -k ${reference_image}
 
-mv -r ${working_directory}/build/verdin-imx8mp/ /opt/output/
+tar -czvf /opt/output/yocto-state.tar.gz /opt/yocto-state/
+tar -czvf /opt/output/verdin-image.tar.gz ${working_directory}/build/deploy/images/verdin-imx8mp/

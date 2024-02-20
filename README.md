@@ -5,4 +5,8 @@ Toradex Docker Image Creator
 docker build --no-cache -t tdx-base -f Dockerfile ./context
 
 ## usage
-docker run --rm -v ./sstate_cache:/opt/yocto-state -v ./output:/opt/yocto-output --entrypoint /bin/bash -it tdx-base
+docker run --rm --name tdx-builder -v ./sstate_cache:/opt/yocto-state -v ./output:/opt/yocto-output --entrypoint /bin/bash -it tdx-base
+
+## copy output from container (while it is running)
+docker cp tdx-builder:/opt/yocto-output/yocto-state.tar.gz ./
+docker cp tdx-builder:/opt/yocto-output/verdin-image.tar.gz ./
