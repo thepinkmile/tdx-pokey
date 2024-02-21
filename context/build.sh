@@ -14,3 +14,4 @@ PARALLEL_MAKE="-j 4" BB_NUMBER_THREADS="4" bitbake -k ${reference_image}
 
 tar -czvf /opt/output/yocto-state.tar.gz /opt/yocto-state/
 tar -czvf /opt/output/verdin-image.tar.gz ${working_directory}/build/deploy/images/verdin-imx8mp/
+tar -czvf /opt/output/cst.tar.gz ${working_directory}/cst/
