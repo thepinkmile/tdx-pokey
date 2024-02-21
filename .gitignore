@@ -2,3 +2,5 @@
 output/verdin-image.tar.gz
 
 output/yocto-state.tar.gz
+
+context/IMX_CST_TOOL_NEW.tgz
