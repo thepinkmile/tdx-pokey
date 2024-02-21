@@ -15,6 +15,10 @@ source export
 
 if ! [ -d ${working_directory}/layers/meta-toradex-security ]; then
     git clone -b kirkstone-6.x.y https://github.com/toradex/meta-toradex-security.git ${working_directory}/layers/meta-toradex-security
+	pushd ${working_directory}/layers/meta-toradex-security
+		# checkout the known hash as in torizoncore manifest
+	    git checkout fc9238ab2790a55d9f88f76e672c47567d2cfadb
+	popd
 fi
 if ! grep -q "meta-toradex-security" "${config_directory}/bblayers.conf"; then
     echo 'BBLAYERS += "${TOPDIR}/../layers/meta-toradex-security"' >> ${config_directory}/bblayers.conf
@@ -38,10 +42,10 @@ if ! [ -d ${cst_crts_root} ]; then
 		echo "${cert_pass}" > key_pass.txt
 		echo "${cert_pass}" >> key_pass.txt
 		
-		./ahab_pki_tree.sh -existing-ca n -kt ${cert_key_type} -kl ${cert_key_length} -da ${cert_key_digest} -duration ${cert_duration_years} -srk-ca y
+		./ahab_pki_tree.sh -existing-ca n -kt ${cert_key_type} -kl ${cert_key_length} -da ${cert_key_digest} -duration ${cert_duration_years} -srk-ca n
 		
 		pushd ../crts
-			../linux64/bin/srktool -a -t SRK_1_2_3_4_table.bin -e SRK_1_2_3_4_fuse.bin -s ${cert_key_digest} -f 1 -c SRK1_${cert_key_digest}_${cert_key_length}_65537_v3_ca_crt.pem,SRK2_${cert_key_digest}_${cert_key_length}_65537_v3_ca_crt.pem,SRK3_${cert_key_digest}_${cert_key_length}_65537_v3_ca_crt.pem,SRK4_${cert_key_digest}_${cert_key_length}_65537_v3_ca_crt.pem
+			../linux64/bin/srktool -a -t SRK_1_2_3_4_table.bin -e SRK_1_2_3_4_fuse.bin -s ${cert_key_digest} -f 1 -c SRK1_${cert_key_digest}_${cert_key_length}_65537_v3_usr_crt.pem,SRK2_${cert_key_digest}_${cert_key_length}_65537_v3_usr_crt.pem,SRK3_${cert_key_digest}_${cert_key_length}_65537_v3_usr_crt.pem,SRK4_${cert_key_digest}_${cert_key_length}_65537_v3_usr_crt.pem
 		popd
 		
 			mkdir ${cst_crts_root}
@@ -67,14 +71,14 @@ fi
 if ! grep -q "UBOOT_SIGN_ENABLE" "${config_directory}/local.conf"; then
 	echo "UBOOT_SIGN_ENABLE = \"1\"" >> ${config_directory}/local.conf
 fi
+if ! grep -q "TDX_IMX_HAB_CST_SRK_CA" "${config_directory}/local.conf"; then
+	echo "TDX_IMX_HAB_CST_SRK_CA = \"0\"" >> ${config_directory}/local.conf
+fi
 if ! grep -q "TDX_IMX_HAB_CST_DIR" "${config_directory}/local.conf"; then
 	echo "TDX_IMX_HAB_CST_DIR = \"${cst_install_dir}\"" >> ${config_directory}/local.conf
 fi
 if ! grep -q "TDX_IMX_HAB_CST_CERTs_DIR" "${config_directory}/local.conf"; then
 	echo "TDX_IMX_HAB_CST_CERTS_DIR = \"${cst_crts_root}/crts\"" >> ${config_directory}/local.conf
-fi
-if ! grep -q "TDX_IMX_HAB_CST_SRK_CERT" "${config_directory}/local.conf"; then
-	echo "TDX_IMX_HAB_CST_SRK_CERT = \"${cst_crts_root}/crts/SGK1_1_${cert_key_digest}_${cert_key_length}_65537_v3_usr_crt.pem\"" >> ${config_directory}/local.conf
 fi
 if ! grep -q "TDX_IMX_HAB_CST_KEY_SIZE" "${config_directory}/local.conf"; then
 	echo "TDX_IMX_HAB_CST_KEY_SIZE = \"${cert_key_length}\"" >> ${config_directory}/local.conf
@@ -84,9 +88,6 @@ if ! grep -q "TDX_IMX_HAB_CST_CRYPTO" "${config_directory}/local.conf"; then
 fi
 if ! grep -q "TDX_IMX_HAB_CST_DIG_ALGO" "${config_directory}/local.conf"; then
 	echo "TDX_IMX_HAB_CST_DIG_ALGO = \"${cert_key_digest}\"" >> ${config_directory}/local.conf
-fi
-if ! grep -q "TDX_IMX_HAB_CST_SRK_CA" "${config_directory}/local.conf"; then
-	echo "TDX_IMX_HAB_CST_SRK_CA = \"1\"" >> ${config_directory}/local.conf
 fi
 
 #if ! grep -q "UBOOT_CONFIG" "${config_directory}/local.conf"; then
