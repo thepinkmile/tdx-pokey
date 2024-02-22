@@ -39,7 +39,6 @@ RUN sudo chmod -R 777 /opt
 RUN mkdir /opt/yocto
 RUN mkdir /opt/tools
 RUN mkdir /opt/yocto-state
-RUN mkdir /opt/yocto-output
 RUN pip3 install sphinx sphinx_rtd_theme pyyaml
 RUN git config --global user.name "John Doe"
 RUN git config --global user.email "johndoe@example.com"

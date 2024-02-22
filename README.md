@@ -10,3 +10,4 @@ docker run --rm --privileged --name tdx-builder -v ./sstate_cache:/opt/yocto-sta
 ## copy output from container (while it is running)
 docker cp tdx-builder:/opt/yocto-output/yocto-state.tar.gz ./
 docker cp tdx-builder:/opt/yocto-output/verdin-image.tar.gz ./
+docker cp tdx-builder:/opt/yocto-output/cst.tar.gz ./
