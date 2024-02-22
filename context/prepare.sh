@@ -42,10 +42,10 @@ if ! [ -d ${cst_crts_root} ]; then
 		echo "${cert_pass}" > key_pass.txt
 		echo "${cert_pass}" >> key_pass.txt
 		
-		./ahab_pki_tree.sh -existing-ca n -kt ${cert_key_type} -kl ${cert_key_length} -da ${cert_key_digest} -duration ${cert_duration_years} -srk-ca n
+		./hab4_pki_tree.sh -existing-ca n -kt ${cert_key_type} -kl ${cert_key_length} -duration ${cert_duration_years} -num-srk 4 -srk-ca y
 		
 		pushd ../crts
-			../linux64/bin/srktool -a -t SRK_1_2_3_4_table.bin -e SRK_1_2_3_4_fuse.bin -s ${cert_key_digest} -f 1 -c SRK1_${cert_key_digest}_${cert_key_length}_65537_v3_usr_crt.pem,SRK2_${cert_key_digest}_${cert_key_length}_65537_v3_usr_crt.pem,SRK3_${cert_key_digest}_${cert_key_length}_65537_v3_usr_crt.pem,SRK4_${cert_key_digest}_${cert_key_length}_65537_v3_usr_crt.pem
+			../linux64/bin/srktool -h 4 -t SRK_1_2_3_4_table.bin -e SRK_1_2_3_4_fuse.bin -d ${cert_key_digest} -f 1 -c SRK1_${cert_key_digest}_${cert_key_length}_65537_v3_ca_crt.pem,SRK2_${cert_key_digest}_${cert_key_length}_65537_v3_ca_crt.pem,SRK3_${cert_key_digest}_${cert_key_length}_65537_v3_ca_crt.pem,SRK4_${cert_key_digest}_${cert_key_length}_65537_v3_ca_crt.pem
 		popd
 		
 			mkdir ${cst_crts_root}
@@ -70,9 +70,6 @@ if ! grep -q "TDX_IMX_HAB_ENABLE" "${config_directory}/local.conf"; then
 fi
 if ! grep -q "UBOOT_SIGN_ENABLE" "${config_directory}/local.conf"; then
 	echo "UBOOT_SIGN_ENABLE = \"1\"" >> ${config_directory}/local.conf
-fi
-if ! grep -q "TDX_IMX_HAB_CST_SRK_CA" "${config_directory}/local.conf"; then
-	echo "TDX_IMX_HAB_CST_SRK_CA = \"0\"" >> ${config_directory}/local.conf
 fi
 if ! grep -q "TDX_IMX_HAB_CST_DIR" "${config_directory}/local.conf"; then
 	echo "TDX_IMX_HAB_CST_DIR = \"${cst_install_dir}\"" >> ${config_directory}/local.conf
