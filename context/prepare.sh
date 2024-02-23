@@ -25,21 +25,28 @@ if ! grep -q "meta-toradex-security" "${config_directory}/bblayers.conf"; then
     echo 'BBLAYERS += "${TOPDIR}/../layers/meta-toradex-security"' >> ${config_directory}/bblayers.conf
 fi
 
+if [ -f ${artifacts_directory}/verdin-image.tar.gz ]; then
+    tar -xzvf ${artifacts_directory}/verdin-image.tar.gz -C ${working_directory}
+fi
+
 # change the config
 sed -i 's@#MACHINE ?= "verdin-imx8mp"@MACHINE ?= "verdin-imx8mp"\nACCEPT_FSL_EULA = "1"\n@g' ${config_directory}/local.conf
 sed -i 's@PACKAGE_CLASSES ?= "package_ipk"@PACKAGE_CLASSES ?= "package_deb"@g' ${config_directory}/local.conf
 
 # copy previous state
 if [ -f ${artifacts_directory}/yocto-state.tar.gz ]; then
-    tar -xzvf ${artifacts_directory}/yocto-state.tar.gz -C /opt/yocto-state
+    tar -xzvf ${artifacts_directory}/yocto-state.tar.gz -C /opt
 fi
 sed -i 's@SSTATE_DIR ?= "${TOPDIR}/../sstate-cache"@SSTATE_DIR ?= "/opt/yocto-state"@g' ${config_directory}/local.conf
 
 # generate signing certificates
-if [ -f ${artifacts_directory}/cst.tar.gz ]; then
-    tar -xzvf ${artifacts_directory}/cst.tar.gz -C ${cst_crts_root}
-fi
 if ! [ -d ${cst_crts_root} ]; then
+    mkdir ${cst_crts_root}
+fi
+if [ -f ${artifacts_directory}/cst.tar.gz ]; then
+    tar -xzvf ${artifacts_directory}/cst.tar.gz -C ${working_directory}
+fi
+if ! [ -d ${cst_crts_root}/keys ]; then
 	pushd ${cst_install_dir}/keys
 		cert_serial="1928374650"
 		cert_pass="Crt_Pass1234"
@@ -58,18 +65,14 @@ if ! [ -d ${cst_crts_root} ]; then
 			../linux64/bin/srktool -h 4 -t SRK_1_2_3_4_table.bin -e SRK_1_2_3_4_fuse.bin -d ${cert_key_digest} -f 1 -c SRK1_${cert_key_digest}_${cert_key_length}_65537_v3_ca_crt.pem,SRK2_${cert_key_digest}_${cert_key_length}_65537_v3_ca_crt.pem,SRK3_${cert_key_digest}_${cert_key_length}_65537_v3_ca_crt.pem,SRK4_${cert_key_digest}_${cert_key_length}_65537_v3_ca_crt.pem
 		popd
 		
-			mkdir ${cst_crts_root}
-			mkdir ${cst_crts_root}/keys
-			mkdir ${cst_crts_root}/crts
+		mkdir ${cst_crts_root}/keys
+		mkdir ${cst_crts_root}/crts
 		
-		cp *.pem ${cst_crts_root}/keys
-		cp *.der ${cst_crts_root}/keys
-		cp serial* ${cst_crts_root}/keys
-		cp index.* ${cst_crts_root}/keys
-		cp key_pass.txt ${cst_crts_root}/keys
-		cp ../crts/*.pem ${cst_crts_root}/crts
-		cp ../crts/*.der ${cst_crts_root}/crts
-		cp ../crts/SRK_1_2_3_4_*.bin ${cst_crts_root}/crts
+		cp ../crts/* ${cst_crts_root}/crts
+		cp * ${cst_crts_root}/keys
+		cd ${cst_crts_root}/keys && rm -f *.sh
+		cd ${cst_crts_root}/keys && rm -f *.bat
+		cd ${cst_crts_root}/keys && rm -f *.exe
 	popd
 fi
 if ! grep -q "tdx-signed" "${config_directory}/local.conf"; then
