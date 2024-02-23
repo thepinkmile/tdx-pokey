@@ -4,6 +4,7 @@ set -e
 path="$( cd -- "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
 working_directory=$PWD
 config_directory=${working_directory}/build/conf
+artifacts_directory=${path}/../artifacts
 cst_install_dir=/opt/tools/cst-3.4.0
 cst_crts_root=${working_directory}/cst
 
@@ -26,9 +27,18 @@ fi
 
 # change the config
 sed -i 's@#MACHINE ?= "verdin-imx8mp"@MACHINE ?= "verdin-imx8mp"\nACCEPT_FSL_EULA = "1"\n@g' ${config_directory}/local.conf
-sed -i 's@SSTATE_DIR ?= "${TOPDIR}/../sstate-cache"@SSTATE_DIR ?= "/opt/yocto-state"@g' ${config_directory}/local.conf
 sed -i 's@PACKAGE_CLASSES ?= "package_ipk"@PACKAGE_CLASSES ?= "package_deb"@g' ${config_directory}/local.conf
 
+# copy previous state
+if [ -f ${artifacts_directory}/yocto-state.tar.gz ]; then
+    tar -xzvf ${artifacts_directory}/yocto-state.tar.gz -C /opt/yocto-state
+fi
+sed -i 's@SSTATE_DIR ?= "${TOPDIR}/../sstate-cache"@SSTATE_DIR ?= "/opt/yocto-state"@g' ${config_directory}/local.conf
+
+# generate signing certificates
+if [ -f ${artifacts_directory}/cst.tar.gz ]; then
+    tar -xzvf ${artifacts_directory}/cst.tar.gz -C ${cst_crts_root}
+fi
 if ! [ -d ${cst_crts_root} ]; then
 	pushd ${cst_install_dir}/keys
 		cert_serial="1928374650"

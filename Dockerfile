@@ -57,4 +57,13 @@ RUN sudo chmod a+wx /opt/tools/prepare.sh
 RUN sudo chmod a+wx /opt/tools/build.sh
 RUN sudo chown $USERNAME /opt/tools/prepare.sh
 RUN sudo chown $USERNAME /opt/tools/build.sh
+
+# Copy previous build artifacts
+RUN mkdir /opt/artifacts
+COPY *.tar.gz /opt/artifacts
+
+# Run environment setup script
 RUN ../tools/prepare.sh
+
+# clean-up uneccessary files
+RUN rm -rf /opt/artifacts
