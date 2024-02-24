@@ -7,10 +7,15 @@ config_directory=${working_directory}/build/conf
 artifacts_directory=${path}/../artifacts
 cst_install_dir=/opt/tools/cst-3.4.0
 cst_crts_root=${working_directory}/cst
+reference_image=tdx-reference-minimal-image
 
 echo "Running in: ${working_directory}"
 echo "Script directory: ${path}"
 echo "Config directory: ${config_directory}"
+
+if ! [ -d ${artifacts_directory} ]; then
+	mkdir ${artifacts_directory}
+fi
 
 source export
 
@@ -25,18 +30,9 @@ if ! grep -q "meta-toradex-security" "${config_directory}/bblayers.conf"; then
     echo 'BBLAYERS += "${TOPDIR}/../layers/meta-toradex-security"' >> ${config_directory}/bblayers.conf
 fi
 
-if [ -f ${artifacts_directory}/verdin-image.tar.gz ]; then
-    tar -xzvf ${artifacts_directory}/verdin-image.tar.gz -C ${working_directory}
-fi
-
 # change the config
 sed -i 's@#MACHINE ?= "verdin-imx8mp"@MACHINE ?= "verdin-imx8mp"\nACCEPT_FSL_EULA = "1"\n@g' ${config_directory}/local.conf
 sed -i 's@PACKAGE_CLASSES ?= "package_ipk"@PACKAGE_CLASSES ?= "package_deb"@g' ${config_directory}/local.conf
-
-# copy previous state
-if [ -f ${artifacts_directory}/yocto-state.tar.gz ]; then
-    tar -xzvf ${artifacts_directory}/yocto-state.tar.gz -C /opt
-fi
 sed -i 's@SSTATE_DIR ?= "${TOPDIR}/../sstate-cache"@SSTATE_DIR ?= "/opt/yocto-state"@g' ${config_directory}/local.conf
 
 # generate signing certificates
@@ -45,6 +41,7 @@ if ! [ -d ${cst_crts_root} ]; then
 fi
 if [ -f ${artifacts_directory}/cst.tar.gz ]; then
     tar -xzvf ${artifacts_directory}/cst.tar.gz -C ${working_directory}
+	rm -f ${artifacts_directory}/cst.tar.gz
 fi
 if ! [ -d ${cst_crts_root}/keys ]; then
 	pushd ${cst_install_dir}/keys
@@ -103,3 +100,11 @@ fi
 #if ! grep -q "UBOOT_CONFIG" "${config_directory}/local.conf"; then
 #	echo "UBOOT_CONFIG = \"emmc\"" >> ${config_directory}/local.conf
 #fi
+
+if ! grep -q "BB_NUMBER_THREADS" "${config_directory}/local.conf"; then
+	echo "BB_NUMBER_THREADS = \"4\"" >> ${config_directory}/local.conf
+fi
+
+if ! grep -q "PARALLEL_MAKE" "${config_directory}/local.conf"; then
+	echo "PARALLEL_MAKE = \"-j 4\"" >> ${config_directory}/local.conf
+fi

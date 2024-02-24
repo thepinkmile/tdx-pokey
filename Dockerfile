@@ -64,6 +64,3 @@ COPY *.tar.gz /opt/artifacts
 
 # Run environment setup script
 RUN ../tools/prepare.sh
-
-# clean-up uneccessary files
-RUN rm -rf /opt/artifacts
