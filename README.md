@@ -1,13 +1,31 @@
 # tdx-pokey
-Toradex Docker Image Creator
+Toradex Docker Image Creator.
 
 ## build
-docker build --no-cache -t tdx-base -f Dockerfile ./context
+To build the main docker image use the provided batch script:
+```
+./build_docker.bat
+```
 
 ## usage
-docker run --rm --privileged --name tdx-builder -v ./sstate_cache:/opt/yocto-state -v ./output:/opt/yocto-output --entrypoint /bin/bash -it tdx-base
+Start a new container (named tdx-builder in these examples):
+```
+docker run --rm --privileged --name tdx-builder --entrypoint /bin/bash -it tdx-base
+```
+Then (if required) copy any previous state into the container in another cmd/powershell prompt:
+```
+docker cp ./output/yocto-state.tar.gz tdx-builder:/opt/artifacts/
+docker cp ./output/verdin-image.tar.gz tdx-builder:/opt/artifacts/
+```
+Then execute the build script from the container shell:
+```
+../tools/build.sh
+```
 
 ## copy output from container (while it is running)
-docker cp tdx-builder:/opt/yocto-output/yocto-state.tar.gz ./
-docker cp tdx-builder:/opt/yocto-output/verdin-image.tar.gz ./
-docker cp tdx-builder:/opt/yocto-output/cst.tar.gz ./
+Now copy the resulting output from the container (from another cmd/poershell prompt) before exiting the intreractive shell:
+```
+docker cp tdx-builder:/opt/yocto-output/yocto-state.tar.gz ./output/
+docker cp tdx-builder:/opt/yocto-output/verdin-image.tar.gz ./output/
+docker cp tdx-builder:/opt/yocto-output/cst.tar.gz ./context/
+```
