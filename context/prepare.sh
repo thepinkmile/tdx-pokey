@@ -14,7 +14,7 @@ echo "Script directory: ${path}"
 echo "Config directory: ${config_directory}"
 
 if ! [ -d ${artifacts_directory} ]; then
-	mkdir ${artifacts_directory}
+    mkdir ${artifacts_directory}
 fi
 
 source export
@@ -43,70 +43,70 @@ if ! [ -d ${cst_crts_root} ]; then
 fi
 if [ -f ${artifacts_directory}/cst.tar.gz ]; then
     tar -xzvf ${artifacts_directory}/cst.tar.gz -C ${working_directory}
-	rm -f ${artifacts_directory}/cst.tar.gz
+    rm -f ${artifacts_directory}/cst.tar.gz
 fi
 if ! [ -d ${cst_crts_root}/keys ]; then
-	pushd ${cst_install_dir}/keys
-		cert_serial="1928374650"
-		cert_pass="Crt_Pass1234"
-		cert_key_type="rsa"
-		cert_key_length=4096
-		cert_key_digest="sha256"
-		cert_duration_years=10
-		
-		echo "${cert_serial}" > serial
-		echo "${cert_pass}" > key_pass.txt
-		echo "${cert_pass}" >> key_pass.txt
-		
-		./hab4_pki_tree.sh -existing-ca n -kt ${cert_key_type} -kl ${cert_key_length} -duration ${cert_duration_years} -num-srk 4 -srk-ca y
-		
-		pushd ../crts
-			../linux64/bin/srktool -h 4 -t SRK_1_2_3_4_table.bin -e SRK_1_2_3_4_fuse.bin -d ${cert_key_digest} -f 1 -c SRK1_${cert_key_digest}_${cert_key_length}_65537_v3_ca_crt.pem,SRK2_${cert_key_digest}_${cert_key_length}_65537_v3_ca_crt.pem,SRK3_${cert_key_digest}_${cert_key_length}_65537_v3_ca_crt.pem,SRK4_${cert_key_digest}_${cert_key_length}_65537_v3_ca_crt.pem
-		popd
-		
-		mkdir ${cst_crts_root}/keys
-		mkdir ${cst_crts_root}/crts
-		
-		cp ../crts/* ${cst_crts_root}/crts
-		cp * ${cst_crts_root}/keys
-		cd ${cst_crts_root}/keys && rm -f *.sh
-		cd ${cst_crts_root}/keys && rm -f *.bat
-		cd ${cst_crts_root}/keys && rm -f *.exe
-	popd
+    pushd ${cst_install_dir}/keys
+        cert_serial="1928374650"
+        cert_pass="Crt_Pass1234"
+        cert_key_type="rsa"
+        cert_key_length=4096
+        cert_key_digest="sha256"
+        cert_duration_years=10
+        
+        echo "${cert_serial}" > serial
+        echo "${cert_pass}" > key_pass.txt
+        echo "${cert_pass}" >> key_pass.txt
+        
+        ./hab4_pki_tree.sh -existing-ca n -kt ${cert_key_type} -kl ${cert_key_length} -duration ${cert_duration_years} -num-srk 4 -srk-ca y
+        
+        pushd ../crts
+            ../linux64/bin/srktool -h 4 -t SRK_1_2_3_4_table.bin -e SRK_1_2_3_4_fuse.bin -d ${cert_key_digest} -f 1 -c SRK1_${cert_key_digest}_${cert_key_length}_65537_v3_ca_crt.pem,SRK2_${cert_key_digest}_${cert_key_length}_65537_v3_ca_crt.pem,SRK3_${cert_key_digest}_${cert_key_length}_65537_v3_ca_crt.pem,SRK4_${cert_key_digest}_${cert_key_length}_65537_v3_ca_crt.pem
+        popd
+        
+        mkdir ${cst_crts_root}/keys
+        mkdir ${cst_crts_root}/crts
+        
+        cp ../crts/* ${cst_crts_root}/crts
+        cp * ${cst_crts_root}/keys
+        cd ${cst_crts_root}/keys && rm -f *.sh
+        cd ${cst_crts_root}/keys && rm -f *.bat
+        cd ${cst_crts_root}/keys && rm -f *.exe
+    popd
 fi
 if ! grep -q "tdx-signed" "${config_directory}/local.conf"; then
-	echo "INHERIT += \"tdx-signed\"" >> ${config_directory}/local.conf
+    echo "INHERIT += \"tdx-signed\"" >> ${config_directory}/local.conf
 fi
 if ! grep -q "TDX_IMX_HAB_ENABLE" "${config_directory}/local.conf"; then
-	echo "TDX_IMX_HAB_ENABLE = \"1\"" >> ${config_directory}/local.conf
+    echo "TDX_IMX_HAB_ENABLE = \"1\"" >> ${config_directory}/local.conf
 fi
 if ! grep -q "UBOOT_SIGN_ENABLE" "${config_directory}/local.conf"; then
-	echo "UBOOT_SIGN_ENABLE = \"1\"" >> ${config_directory}/local.conf
+    echo "UBOOT_SIGN_ENABLE = \"1\"" >> ${config_directory}/local.conf
 fi
 if ! grep -q "TDX_IMX_HAB_CST_DIR" "${config_directory}/local.conf"; then
-	echo "TDX_IMX_HAB_CST_DIR = \"${cst_install_dir}\"" >> ${config_directory}/local.conf
+    echo "TDX_IMX_HAB_CST_DIR = \"${cst_install_dir}\"" >> ${config_directory}/local.conf
 fi
 if ! grep -q "TDX_IMX_HAB_CST_CERTs_DIR" "${config_directory}/local.conf"; then
-	echo "TDX_IMX_HAB_CST_CERTS_DIR = \"${cst_crts_root}/crts\"" >> ${config_directory}/local.conf
+    echo "TDX_IMX_HAB_CST_CERTS_DIR = \"${cst_crts_root}/crts\"" >> ${config_directory}/local.conf
 fi
 if ! grep -q "TDX_IMX_HAB_CST_KEY_SIZE" "${config_directory}/local.conf"; then
-	echo "TDX_IMX_HAB_CST_KEY_SIZE = \"${cert_key_length}\"" >> ${config_directory}/local.conf
+    echo "TDX_IMX_HAB_CST_KEY_SIZE = \"${cert_key_length}\"" >> ${config_directory}/local.conf
 fi
 if ! grep -q "TDX_IMX_HAB_CST_CRYPTO" "${config_directory}/local.conf"; then
-	echo "TDX_IMX_HAB_CST_CRYPTO = \"${cert_key_type}\"" >> ${config_directory}/local.conf
+    echo "TDX_IMX_HAB_CST_CRYPTO = \"${cert_key_type}\"" >> ${config_directory}/local.conf
 fi
 if ! grep -q "TDX_IMX_HAB_CST_DIG_ALGO" "${config_directory}/local.conf"; then
-	echo "TDX_IMX_HAB_CST_DIG_ALGO = \"${cert_key_digest}\"" >> ${config_directory}/local.conf
+    echo "TDX_IMX_HAB_CST_DIG_ALGO = \"${cert_key_digest}\"" >> ${config_directory}/local.conf
 fi
 
 #if ! grep -q "UBOOT_CONFIG" "${config_directory}/local.conf"; then
-#	echo "UBOOT_CONFIG = \"emmc\"" >> ${config_directory}/local.conf
+#    echo "UBOOT_CONFIG = \"emmc\"" >> ${config_directory}/local.conf
 #fi
 
 if ! grep -q "BB_NUMBER_THREADS" "${config_directory}/local.conf"; then
-	echo "BB_NUMBER_THREADS = \"4\"" >> ${config_directory}/local.conf
+    echo "BB_NUMBER_THREADS = \"4\"" >> ${config_directory}/local.conf
 fi
 
 if ! grep -q "PARALLEL_MAKE" "${config_directory}/local.conf"; then
-	echo "PARALLEL_MAKE = \"-j 4\"" >> ${config_directory}/local.conf
+    echo "PARALLEL_MAKE = \"-j 4\"" >> ${config_directory}/local.conf
 fi
