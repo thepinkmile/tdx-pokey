@@ -12,11 +12,13 @@ echo "Script directory: ${path}"
 
 # copy previous output if provided
 if [ -f ${artifacts_directory}/verdin-image.tar.gz ]; then
+	echo "Extracting previous images..."
     tar -xzvf ${artifacts_directory}/verdin-image.tar.gz -C ${working_directory}
 	rm -f ${artifacts_directory}/verdin-image.tar.gz
 fi
 # copy previous state
 if [ -f ${artifacts_directory}/yocto-state.tar.gz ]; then
+	echo "Extracting previous state..."
     tar -xzvf ${artifacts_directory}/yocto-state.tar.gz -C /opt
 	rm -f ${artifacts_directory}/yocto-state.tar.gz
 fi
