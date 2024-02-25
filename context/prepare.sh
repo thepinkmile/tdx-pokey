@@ -38,6 +38,10 @@ sed -i 's@PACKAGE_CLASSES ?= "package_ipk"@PACKAGE_CLASSES ?= "package_deb"@g' $
 sed -i 's@SSTATE_DIR ?= "${TOPDIR}/../sstate-cache"@SSTATE_DIR ?= "/opt/yocto-state"@g' ${config_directory}/local.conf
 
 # generate signing certificates
+cert_key_type="rsa"
+cert_key_length=4096
+cert_key_digest="sha256"
+cert_duration_years=10
 if ! [ -d ${cst_crts_root} ]; then
     mkdir ${cst_crts_root}
 fi
@@ -49,10 +53,6 @@ if ! [ -d ${cst_crts_root}/keys ]; then
     pushd ${cst_install_dir}/keys
         cert_serial="1928374650"
         cert_pass="Crt_Pass1234"
-        cert_key_type="rsa"
-        cert_key_length=4096
-        cert_key_digest="sha256"
-        cert_duration_years=10
         
         echo "${cert_serial}" > serial
         echo "${cert_pass}" > key_pass.txt
