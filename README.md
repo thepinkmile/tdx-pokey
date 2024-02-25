@@ -14,8 +14,7 @@ docker run --rm --privileged --name tdx-builder --entrypoint /bin/bash -it tdx-b
 ```
 Then (if required) copy any previous state into the container in another cmd/powershell prompt:
 ```
-docker cp ./output/yocto-state.tar.gz tdx-builder:/opt/artifacts/
-docker cp ./output/verdin-image.tar.gz tdx-builder:/opt/artifacts/
+./set_yocto_state.bat
 ```
 Then execute the build script from the container shell:
 ```
@@ -25,7 +24,5 @@ Then execute the build script from the container shell:
 ## copy output from container (while it is running)
 Now copy the resulting output from the container (from another cmd/poershell prompt) before exiting the intreractive shell:
 ```
-docker cp tdx-builder:/opt/yocto-output/yocto-state.tar.gz ./output/
-docker cp tdx-builder:/opt/yocto-output/verdin-image.tar.gz ./output/
-docker cp tdx-builder:/opt/yocto-output/cst.tar.gz ./context/
+./get_yocto_state.bat
 ```
