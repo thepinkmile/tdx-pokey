@@ -5,7 +5,7 @@ path="$( cd -- "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
 working_directory=$PWD
 config_directory=${working_directory}/build/conf
 artifacts_directory=${path}/../artifacts
-cst_install_dir=/opt/tools/cst-3.4.0
+cst_install_dir=/opt/tools/cst
 cst_crts_root=${working_directory}/cst
 reference_image=tdx-reference-minimal-image
 

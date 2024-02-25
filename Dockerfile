@@ -52,6 +52,7 @@ RUN ~/.bin/repo sync -j1 --fail-fast
 COPY *.tgz /opt/tools
 RUN tar -xzvf /opt/tools/IMX_CST_TOOL_NEW.tgz -C /opt/tools
 RUN rm -f /opt/tools/IMX_CST_TOOL_NEW.tgz
+RUN mv /opt/tools/cst* /opt/tools/cst
 COPY *.sh /opt/tools
 RUN sudo chmod a+wx /opt/tools/prepare.sh
 RUN sudo chmod a+wx /opt/tools/build.sh
