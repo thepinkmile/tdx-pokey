@@ -20,11 +20,13 @@ fi
 source export
 
 if ! [ -d ${working_directory}/layers/meta-toradex-security ]; then
+    echo "Retrieving meta layer meta-toradex-security..."
     git clone -b kirkstone-6.x.y https://github.com/toradex/meta-toradex-security.git ${working_directory}/layers/meta-toradex-security
-	pushd ${working_directory}/layers/meta-toradex-security
-		# checkout the known hash as in torizoncore manifest
-	    git checkout fc9238ab2790a55d9f88f76e672c47567d2cfadb
-	popd
+else
+    pushd ${working_directory}/layers/meta-toradex-security
+        echo "Updating meta layer meta-toradex-security..."
+        git pull
+    popd
 fi
 if ! grep -q "meta-toradex-security" "${config_directory}/bblayers.conf"; then
     echo 'BBLAYERS += "${TOPDIR}/../layers/meta-toradex-security"' >> ${config_directory}/bblayers.conf
