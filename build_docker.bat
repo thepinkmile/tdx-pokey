@@ -1,6 +1,6 @@
 @ECHO OFF
 PUSHD %~dp0
 
-	docker build -t tdx-base -f Dockerfile ./context
+	docker build --no-cache -t tdx-base -f Dockerfile ./context
 
 POPD
