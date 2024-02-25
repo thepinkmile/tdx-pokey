@@ -55,8 +55,10 @@ RUN rm -f /opt/tools/IMX_CST_TOOL_NEW.tgz
 RUN mv /opt/tools/cst* /opt/tools/cst
 COPY *.sh /opt/tools
 RUN sudo chmod a+wx /opt/tools/prepare.sh
+RUN sudo chmod a+wx /opt/tools/add_layer.sh
 RUN sudo chmod a+wx /opt/tools/build.sh
 RUN sudo chown $USERNAME /opt/tools/prepare.sh
+RUN sudo chown $USERNAME /opt/tools/add_layer.sh
 RUN sudo chown $USERNAME /opt/tools/build.sh
 
 # Copy previous build artifacts
