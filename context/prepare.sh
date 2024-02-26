@@ -6,14 +6,16 @@ working_directory=$PWD
 config_directory=${working_directory}/build/conf
 artifacts_directory=${path}/../artifacts
 
-secure_boot=false
+secure_boot=$false
 num_threads=4
-while [[$# -gt 0]]; do
+while [[ $# -gt 0 ]]; do
     case $1 in
         --secure-boot)
-            secure_boot=true
+            echo "Enabling Secure-Boot"
+            secure_boot=$true
             ;;
         --threads)
+            echo "Setting thread count to: ${num_threads}"
             shift
             num_threads=$1
             ;;
@@ -48,7 +50,7 @@ fi
 
 source export
 
-if [ secure_boot -eq true ]; then
+if [[ secure_boot -eq $true ]]; then
     if ! [ -d ${working_directory}/layers/meta-toradex-security ]; then
         echo "Retrieving meta layer meta-toradex-security..."
         git clone -b kirkstone-6.x.y https://github.com/toradex/meta-toradex-security.git ${working_directory}/layers/meta-toradex-security

@@ -10,10 +10,10 @@ echo "Running in: ${working_directory}"
 meta_repo_name=meta-mmg-custom
 meta_repo_path=https://github.com/thepinkmile
 meta_repo_branch=main
-while [[$# -gt 0]]; do
+while [[ $# -gt 0 ]]; do
     case $1 in
         --repo-root)
-			shift
+            shift
             meta_repo_path=$1
             ;;
         --repo-name)
@@ -33,7 +33,7 @@ while [[$# -gt 0]]; do
             echo ""
             echo "--repo-root: Required, The base url for your git repository source (default layer example is for personal learning only)."
             echo "--repo-name: Required, The name of the git repository (which should be the same as the layer name)."
-			echo "--repo-branch: Default=main, The name of the git repository branch to be cloned."
+            echo "--repo-branch: Default=main, The name of the git repository branch to be cloned."
             echo ""
             echo "###########################################"
             exit 0
@@ -45,6 +45,9 @@ while [[$# -gt 0]]; do
     esac
     shift
 done
+echo "Git Repo Path: ${meta_repo_path}"
+echo "Git Repo Name: ${meta_repo_name}"
+echo "Git Repo Branch: ${meta_repo_branch}"
 
 source export
 

@@ -7,10 +7,11 @@ artifacts_directory=${path}/../artifacts
 cst_crts_root=${working_directory}/cst
 reference_image=tdx-reference-minimal-image
 
-while [[$# -gt 0]]; do
+while [[ $# -gt 0 ]]; do
     case $1 in
         --image)
             shift
+            echo "Setting image: $1"
             reference_image=$1
             ;;
         --help)

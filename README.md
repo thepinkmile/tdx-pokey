@@ -16,7 +16,7 @@ The main aims of this repo are:
 ## Building the docker build environment
 To build the main docker image use the provided batch script:
 ```
-./build_docker.bat
+./build_docker.bat [PREP_ARGS "--secure-boot --threads 4"]
 ```
 
 ## Using the docker build environment
@@ -30,7 +30,7 @@ Then (if required) copy any previous state into the container in another cmd/pow
 ```
 Then execute the build script from the container shell:
 ```
-../tools/build.sh
+../tools/build.sh [--image tdx-reference-minimal-image]
 ```
 
 ## Retrieve output from the docker environment
