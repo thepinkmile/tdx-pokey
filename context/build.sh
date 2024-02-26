@@ -7,6 +7,33 @@ artifacts_directory=${path}/../artifacts
 cst_crts_root=${working_directory}/cst
 reference_image=tdx-reference-minimal-image
 
+while [[$# -gt 0]]; do
+    case $1 in
+        --image)
+            shift
+            reference_image=$1
+            ;;
+        --help)
+            echo "##################################"
+            echo "### Toradex yocto build script ###"
+            echo "##################################"
+            echo ""
+            echo "./build.sh [--image {image-name}]"
+            echo ""
+            echo "--image: Default=tdx-reference-minimal-image, This allows for selecting a different bitbake image to be built."
+            echo "    Known Image Names: [tdx-reference-minimal-image] [tdx-reference-multimedia-image]"
+            echo ""
+            echo "##################################"
+            exit 0
+            ;;
+        *)
+            echo "Unknown argument: $1"
+            exit 1
+            ;;
+    esac
+    shift
+done
+
 echo "Running in: ${working_directory}"
 echo "Script directory: ${path}"
 

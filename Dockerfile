@@ -1,5 +1,7 @@
 FROM ubuntu:22.04
 
+ARG PREP_ARGS="--secure-boot --threads 4"
+
 # Set timezone
 RUN apt-get update && apt-get install -y tzdata
 ENV TZ=Europe/London
@@ -50,9 +52,6 @@ RUN ~/.bin/repo sync -j1 --fail-fast
 
 # Copy scripts and make them executable
 COPY *.tgz /opt/tools
-RUN tar -xzvf /opt/tools/IMX_CST_TOOL_NEW.tgz -C /opt/tools
-RUN rm -f /opt/tools/IMX_CST_TOOL_NEW.tgz
-RUN mv /opt/tools/cst* /opt/tools/cst
 COPY *.sh /opt/tools
 RUN sudo chmod a+wx /opt/tools/prepare.sh
 RUN sudo chmod a+wx /opt/tools/add_layer.sh
@@ -66,4 +65,4 @@ RUN mkdir /opt/artifacts
 COPY *.tar.gz /opt/artifacts
 
 # Run environment setup script
-RUN ../tools/prepare.sh
+RUN ../tools/prepare.sh $PREP_ARGS

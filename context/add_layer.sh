@@ -2,14 +2,49 @@
 set -e
 
 path="$( cd -- "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
-echo "Script directory: ${path}"
 working_directory=$PWD
-echo "Running in: ${working_directory}"
 config_directory=${working_directory}/build/conf
+echo "Script directory: ${path}"
+echo "Running in: ${working_directory}"
 
 meta_repo_name=meta-mmg-custom
 meta_repo_path=https://github.com/thepinkmile
 meta_repo_branch=main
+while [[$# -gt 0]]; do
+    case $1 in
+        --repo-root)
+			shift
+            meta_repo_path=$1
+            ;;
+        --repo-name)
+            shift
+            meta_repo_name=$1
+            ;;
+        --repo-branch)
+            shift
+            meta_repo_branch=$1
+            ;;
+        --help)
+            echo "###########################################"
+            echo "### Toradex yocto layer addition script ###"
+            echo "###########################################"
+            echo ""
+            echo "./add_layer.sh [--repo-root {git-base-url}] [--repo-name {layer-namae}] [--repo-branch {branch-or-commit}]"
+            echo ""
+            echo "--repo-root: Required, The base url for your git repository source (default layer example is for personal learning only)."
+            echo "--repo-name: Required, The name of the git repository (which should be the same as the layer name)."
+			echo "--repo-branch: Default=main, The name of the git repository branch to be cloned."
+            echo ""
+            echo "###########################################"
+            exit 0
+            ;;
+        *)
+            echo "Unknown argument: $1"
+            exit 1
+            ;;
+    esac
+    shift
+done
 
 source export
 
