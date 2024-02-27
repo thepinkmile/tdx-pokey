@@ -51,18 +51,7 @@ fi
 source export
 
 if [[ secure_boot -eq $true ]]; then
-    if ! [ -d ${working_directory}/layers/meta-toradex-security ]; then
-        echo "Retrieving meta layer meta-toradex-security..."
-        git clone -b kirkstone-6.x.y https://github.com/toradex/meta-toradex-security.git ${working_directory}/layers/meta-toradex-security
-    else
-        pushd ${working_directory}/layers/meta-toradex-security
-            echo "Updating meta layer meta-toradex-security..."
-            git pull
-        popd
-    fi
-    if ! grep -q "meta-toradex-security" "${config_directory}/bblayers.conf"; then
-        echo 'BBLAYERS += "${TOPDIR}/../layers/meta-toradex-security"' >> ${config_directory}/bblayers.conf
-    fi
+    ${PATH}/add_layer.sh --repo-root https://github.com/toradex --repo-name meta-toradex-security --repo-branch kirkstone-6.x.y
     
     cst_install_dir=/opt/tools/cst
     cst_crts_root=${working_directory}/cst
