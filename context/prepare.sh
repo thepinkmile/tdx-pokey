@@ -1,10 +1,10 @@
 #!/bin/bash
 set -e
 
-path="$( cd -- "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
+script_path="$( cd -- "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
 working_directory=$PWD
 config_directory=${working_directory}/build/conf
-artifacts_directory=${path}/../artifacts
+artifacts_directory=${script_path}/../artifacts
 
 secure_boot=$false
 num_threads=4
@@ -41,7 +41,7 @@ while [[ $# -gt 0 ]]; do
 done
 
 echo "Running in: ${working_directory}"
-echo "Script directory: ${path}"
+echo "Script directory: ${script_path}"
 echo "Config directory: ${config_directory}"
 
 if ! [ -d ${artifacts_directory} ]; then
@@ -51,7 +51,9 @@ fi
 source export
 
 if [[ secure_boot -eq $true ]]; then
-    ${PATH}/add_layer.sh --repo-root https://github.com/toradex --repo-name meta-toradex-security --repo-branch kirkstone-6.x.y
+    pushd ${working_directory}
+        ${script_path}/add_layer.sh --repo-root https://github.com/toradex --repo-name meta-toradex-security --repo-branch kirkstone-6.x.y
+    popd
     
     cst_install_dir=/opt/tools/cst
     cst_crts_root=${working_directory}/cst

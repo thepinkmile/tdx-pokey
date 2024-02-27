@@ -1,10 +1,10 @@
 #!/bin/bash
 set -e
 
-path="$( cd -- "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
+script_path="$( cd -- "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
 working_directory=$PWD
 config_directory=${working_directory}/build/conf
-echo "Script directory: ${path}"
+echo "Script directory: ${script_path}"
 echo "Running in: ${working_directory}"
 
 meta_repo_name=meta-mmg-custom
@@ -49,7 +49,11 @@ echo "Git Repo Path: ${meta_repo_path}"
 echo "Git Repo Name: ${meta_repo_name}"
 echo "Git Repo Branch: ${meta_repo_branch}"
 
-source export
+if ! [ -f ${config_directory}/bblayers.conf ]; then
+    pushd ${working_directory}
+        source export
+    popd
+fi
 
 if ! [ -d ${working_directory}/layers/${meta_repo_name} ]; then
     echo "Retrieving meta layer ${meta_repo_name}..."
