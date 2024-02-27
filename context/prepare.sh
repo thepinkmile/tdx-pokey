@@ -52,7 +52,7 @@ source export
 
 if [[ secure_boot -eq $true ]]; then
     pushd ${working_directory}
-        ${script_path}/add_layer.sh --repo-root https://github.com/toradex --repo-name meta-toradex-security --repo-branch kirkstone-6.x.y
+        ${script_path}/add_git_layer.sh --repo-root https://github.com/toradex --repo-name meta-toradex-security --repo-branch kirkstone-6.x.y
     popd
     
     cst_install_dir=/opt/tools/cst
