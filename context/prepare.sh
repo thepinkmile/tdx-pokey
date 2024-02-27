@@ -58,8 +58,13 @@ if [[ secure_boot -eq $true ]]; then
     cst_install_dir=/opt/tools/cst
     cst_crts_root=${working_directory}/cst
     
-    tar -xzvf /opt/tools/IMX_CST_TOOL_NEW.tgz -C /opt/tools
-    mv /opt/tools/cst* ${cst_install_dir}
+	if [ -f /opt/tools/IMX_CST_TOOL_NEW.tgz ]; then
+        tar -xzvf /opt/tools/IMX_CST_TOOL_NEW.tgz -C /opt/tools
+        mv /opt/tools/cst* ${cst_install_dir}
+	else
+		echo "No CST arcive found to extract. please add 'IMX_CST_TOOL_NEW.tgz' to the docker context folder to proceed."
+		exit -1
+	fi
     
     # generate signing certificates
     cert_key_type="rsa"
@@ -122,6 +127,9 @@ if [[ secure_boot -eq $true ]]; then
     if ! grep -q "TDX_IMX_HAB_CST_DIG_ALGO" "${config_directory}/local.conf"; then
         echo "TDX_IMX_HAB_CST_DIG_ALGO = \"${cert_key_digest}\"" >> ${config_directory}/local.conf
     fi
+fi
+if [ -f /opt/tools/IMX_CST_TOOL_NEW.tgz ]; then
+    rm -f /opt/tools/IMX_CST_TOOL_NEW.tgz
 fi
 
 # change the config
