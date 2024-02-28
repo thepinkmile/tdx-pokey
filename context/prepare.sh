@@ -5,6 +5,7 @@ script_path="$( cd -- "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
 working_directory=$PWD
 config_directory=${working_directory}/build/conf
 artifacts_directory=${script_path}/../artifacts
+output_directory=/opt/yocto-output
 
 secure_boot=$false
 num_threads=4
@@ -46,6 +47,9 @@ echo "Config directory: ${config_directory}"
 
 if ! [ -d ${artifacts_directory} ]; then
     mkdir ${artifacts_directory}
+fi
+if ! { -d ${output_directory} ]; then
+	mkdir ${output_directory}
 fi
 
 source export
@@ -98,9 +102,12 @@ if [[ secure_boot -eq $true ]]; then
             
             cp ../crts/* ${cst_crts_root}/crts
             cp * ${cst_crts_root}/keys
-            cd ${cst_crts_root}/keys && rm -f *.sh
-            cd ${cst_crts_root}/keys && rm -f *.bat
-            cd ${cst_crts_root}/keys && rm -f *.exe
+			pushd ${cst_crts_root}/keys
+				rm -f *.sh
+				rm -f *.bat
+				rm -f *.exe
+			popd
+			tar -czvf ${output_directory}/cst.tar.gz -C ${working_directory} cst
         popd
     fi
     if ! grep -q "tdx-signed" "${config_directory}/local.conf"; then
