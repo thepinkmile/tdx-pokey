@@ -48,7 +48,7 @@ echo "Config directory: ${config_directory}"
 if ! [ -d ${artifacts_directory} ]; then
     mkdir ${artifacts_directory}
 fi
-if ! { -d ${output_directory} ]; then
+if ! [ -d ${output_directory} ]; then
 	mkdir ${output_directory}
 fi
 
