@@ -2,7 +2,7 @@
 
 SET "WORKING_DIR=%~dp0"
 SET "SET_STATE=True"
-SET "SET_KEYS=False"
+SET "SET_KEYS=True"
 :Loop
 IF "%~1"=="" GOTO Continue
 	IF "%~1"=="--help" (

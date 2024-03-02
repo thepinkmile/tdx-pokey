@@ -3,7 +3,7 @@
 SET "WORKING_DIR=%~dp0"
 SET "GET_IMAGE=True"
 SET "GET_STATE=True"
-SET "GET_KEYS=False"
+SET "GET_KEYS=True"
 :Loop
 IF "%~1"=="" GOTO Continue
 	IF "%~1"=="--help" (
