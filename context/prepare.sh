@@ -80,7 +80,7 @@ if [[ secure_boot -eq $true ]]; then
     fi
     if [ -f ${artifacts_directory}/cst.tar.gz ]; then
         tar -xzvf ${artifacts_directory}/cst.tar.gz -C ${working_directory}
-        rm -f ${artifacts_directory}/cst.tar.gz
+        mv -f ${artifacts_directory}/cst.tar.gz ${output_directory}/cst.tar.gz
     fi
     if ! [ -d ${cst_crts_root}/keys ]; then
         pushd ${cst_install_dir}/keys

@@ -55,7 +55,9 @@ source export
 
 bitbake -k ${reference_image}
 
-mkdir /opt/yocto-output
+if ! [ -d /opt/yocto-output ]; then
+    mkdir /opt/yocto-output
+fi
 tar -czvf /opt/yocto-output/yocto-state.tar.gz -C /opt yocto-state/
 tar -czvf /opt/yocto-output/verdin-image.tar.gz -C ${working_directory} build/deploy/images/verdin-imx8mp/
 tar -czvf /opt/yocto-output/fit-keys.tar.gz -C ${working_directory} build/keys/
