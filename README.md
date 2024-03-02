@@ -13,6 +13,8 @@ The main aims of this repo are:
 3. To understand how to build an image with full-disk encryption
 4. To learn how to create custom yocto layers, distributions and images
 
+NOTE: All scripts in this repository include a '--help' argument to detail any parameters and provide examples.
+
 ## Building the docker build environment
 To build the main docker image use the provided batch script:
 ```

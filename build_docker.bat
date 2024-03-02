@@ -48,4 +48,9 @@ ECHO Passthrough Args: %PASSTHROUGH_ARGS%
 ECHO Using Args: %EXTRA_ARGS%
 PUSHD %WD%
 	docker build%PASSTHROUGH_ARGS% -t tdx-base -f Dockerfile%EXTRA_ARGS% ./context
+
+	echo:
+	echo You can now start a toradex yocto buil environment with the following command:
+	echo   docker run --rm --name tdx-builder --entrypoint /bin/bash -it tdx-base
+	echo:
 POPD
