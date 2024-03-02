@@ -14,6 +14,13 @@ IF "%~1"=="" GOTO Continue
 		echo: 
 		echo .\get_yocto_state^.bat [--no-image] [--no-state] [--no-keys]
 		echo:
+		echo   NOTE:
+		echo     This script will copy the following files:
+		echo       - 'verdin-image.tar.gz' in the 'output' folder - This contains the built deploy image files^.
+		echo       - 'yocto-state.tar.gz' in the 'output' folder - This contains the build state ^(this can be several GB in size^)^.
+		echo       - 'fit-keys.tar.gz' in the 'output' folder - This contains the fit image keys ^(if the '--secure-boot' environment is used^)^.
+		echo       - 'cst.tar.gz' in the 'context' folder - This contains the image signing certificates ^(if the '--secure-boot' environment is used^)^.
+		echo:
 		echo example:
 		echo   %WORKING_DIR%get_yocto_state^.bat --no-keys
 		echo:

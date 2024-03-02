@@ -13,6 +13,10 @@ IF "%~1"=="" GOTO Continue
 		echo: 
 		echo .\set_yocto_state^.bat [--no-state] [--no-keys]
 		echo:
+		echo   NOTE:
+		echo     To use a previous state you should have a 'yocto-state.tar.gz' in the 'output' folder ^(generated as part of a previous build^)^.
+		echo     To use previous keys you should have a 'fit-keys.tar.gz' in the 'output' folder ^(generated as part of a previous build^)^.
+		echo:
 		echo example:
 		echo   %WORKING_DIR%set_yocto_state^.bat --no-keys
 		echo:

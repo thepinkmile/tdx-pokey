@@ -15,6 +15,10 @@ IF "%~1"=="" GOTO Continue
 		echo: 
 		echo .\build_docker^.bat {docker-file-args} [--help] [-- {docker-build-args}]
 		echo:
+		echo   NOTE: ^(for '--secure-boot' environment ^)
+		echo     To use previous certificates you should have a 'cst.tar.gz' in the 'context' folder ^(generated as part of a previous build^)^.
+		echo     You will also need the imx cst too 'IMX_CST_TOOL_NEW.tgz' in the 'context' folder ^(Retrieved from: https://www.nxp.com/webapp/sps/download/license.jsp?colCode=IMX_CST_TOOL^)^.
+		echo:
 		echo example:
 		echo   %WD%build_docker.bat PREP_ARGS ^"--secure-boot --threads 4^" -- --no-cache
 		echo:
