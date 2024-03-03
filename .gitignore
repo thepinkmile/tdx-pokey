@@ -3,3 +3,5 @@ context/*.tar.gz
 output/*
 
 context/add_mmg_layers.sh
+
+full_build.bat

@@ -57,4 +57,10 @@ PUSHD %WD%
 	echo You can now start a toradex yocto buil environment with the following command:
 	echo   docker run --rm --name tdx-builder --entrypoint /bin/bash -it tdx-base
 	echo:
+	echo Alternativley you can start a detached instance to enable set_up before attaching to console:
+	echo   docker run --rm --name tdx-builder --entrypoint /bin/bash -dit tdx-base
+	echo   %WD%set_yocto_state.bat
+	echo   docker exec -it tdx-builder sh -c "../tools/build.sh --image tdx-reference-minimal-image"
+	echo   %WD%get_yocto_state.bat
+	echo:
 POPD
