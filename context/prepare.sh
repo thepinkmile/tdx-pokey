@@ -58,18 +58,23 @@ if [[ secure_boot -eq $true ]]; then
     pushd ${working_directory}
         ${script_path}/add_git_layer.sh --repo-root https://github.com/toradex --repo-name meta-toradex-security --repo-branch kirkstone-6.x.y
     popd
-    
+
     cst_install_dir=/opt/tools/cst
     cst_crts_root=${working_directory}/cst
-    
+
     if [ -f /opt/tools/IMX_CST_TOOL_NEW.tgz ]; then
-        tar -xzf /opt/tools/IMX_CST_TOOL_NEW.tgz -C /opt/tools
+        if [ -d ${cst_install_dir} ]; then
+            rm -rf ${cst_install_dir}
+        fi
+        pv /opt/tools/IMX_CST_TOOL_NEW.tgz | tar -xzf - -C /opt/tools/
         mv /opt/tools/cst* ${cst_install_dir}
+    elif [ -d ${cst_install_dir} ]; then
+        echo "CST tool already present."
     else
         echo "No CST arcive found to extract. please add 'IMX_CST_TOOL_NEW.tgz' to the docker context folder to proceed."
         exit -1
     fi
-    
+
     # generate signing certificates
     cert_key_type="rsa"
     cert_key_length=4096
@@ -79,35 +84,37 @@ if [[ secure_boot -eq $true ]]; then
         mkdir ${cst_crts_root}
     fi
     if [ -f ${artifacts_directory}/cst.tar.gz ]; then
-        tar -xzf ${artifacts_directory}/cst.tar.gz -C ${working_directory}
+        pv ${artifacts_directory}/cst.tar.gz | tar -xzf -C ${working_directory}
+        #tar -xzvf ${artifacts_directory}/cst.tar.gz -C ${working_directory}
         mv -f ${artifacts_directory}/cst.tar.gz ${output_directory}/cst.tar.gz
     fi
     if ! [ -d ${cst_crts_root}/keys ]; then
         pushd ${cst_install_dir}/keys
             cert_serial="1928374650"
             cert_pass="Crt_Pass1234"
-            
+
             echo "${cert_serial}" > serial
             echo "${cert_pass}" > key_pass.txt
             echo "${cert_pass}" >> key_pass.txt
-            
+
             ./hab4_pki_tree.sh -existing-ca n -kt ${cert_key_type} -kl ${cert_key_length} -duration ${cert_duration_years} -num-srk 4 -srk-ca y
-            
+
             pushd ../crts
                 ../linux64/bin/srktool -h 4 -t SRK_1_2_3_4_table.bin -e SRK_1_2_3_4_fuse.bin -d ${cert_key_digest} -f 1 -c SRK1_${cert_key_digest}_${cert_key_length}_65537_v3_ca_crt.pem,SRK2_${cert_key_digest}_${cert_key_length}_65537_v3_ca_crt.pem,SRK3_${cert_key_digest}_${cert_key_length}_65537_v3_ca_crt.pem,SRK4_${cert_key_digest}_${cert_key_length}_65537_v3_ca_crt.pem
             popd
-            
+
             mkdir ${cst_crts_root}/keys
             mkdir ${cst_crts_root}/crts
-            
-            cp ../crts/* ${cst_crts_root}/crts
-            cp * ${cst_crts_root}/keys
-			pushd ${cst_crts_root}/keys
-				rm -f *.sh
-				rm -f *.bat
-				rm -f *.exe
-			popd
-			tar -czf ${output_directory}/cst.tar.gz -C ${working_directory} cst
+
+            cp -rf ${cst_install_dir}/crts/ ${cst_crts_root}/crts/
+            cp -rf ${cst_install_dir}/keys/ ${cst_crts_root}/keys/
+            pushd ${cst_crts_root}/keys
+                rm -f *.sh
+                rm -f *.bat
+                rm -f *.exe
+            popd
+
+            tar cf - -C ${working_directory} cst | pv -s $(du -sb ${working_directory}/cst | awk '{print $1}') | gzip > ${output_directory}/cst.tar.gz
         popd
     fi
     if ! grep -q "tdx-signed" "${config_directory}/local.conf"; then
@@ -140,6 +147,7 @@ if [ -f /opt/tools/IMX_CST_TOOL_NEW.tgz ]; then
 fi
 
 # change the config
+echo "Updating build configuration..."
 sed -i 's@#MACHINE ?= "verdin-imx8mp"@MACHINE ?= "verdin-imx8mp"\nACCEPT_FSL_EULA = "1"\n@g' ${config_directory}/local.conf
 sed -i 's@PACKAGE_CLASSES ?= "package_ipk"@PACKAGE_CLASSES ?= "package_deb"@g' ${config_directory}/local.conf
 sed -i 's@SSTATE_DIR ?= "${TOPDIR}/../sstate-cache"@SSTATE_DIR ?= "/opt/yocto-state"@g' ${config_directory}/local.conf

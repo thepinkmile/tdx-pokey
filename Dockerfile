@@ -21,7 +21,7 @@ USER $USERNAME
 
 # Install prerequisites
 RUN sudo apt-get update
-RUN sudo apt-get install -y gawk wget git diffstat unzip texinfo gcc
+RUN sudo apt-get install -y gawk wget git diffstat unzip texinfo gcc pv
 RUN sudo apt-get install -y build-essential chrpath socat cpio python3 python3-pip
 RUN sudo apt-get install -y python3-pexpect xz-utils debianutils iputils-ping
 RUN sudo apt-get install -y python3-git python3-jinja2 libegl1-mesa libsdl1.2-dev
