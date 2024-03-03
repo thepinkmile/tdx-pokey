@@ -41,13 +41,13 @@ echo "Script directory: ${path}"
 # copy previous state
 if [ -f ${artifacts_directory}/yocto-state.tar.gz ]; then
     echo "Extracting previous state..."
-    tar -xzf ${artifacts_directory}/yocto-state.tar.gz -C /opt
+    pv ${artifacts_directory}/yocto-state.tar.gz | tar -xzf - -C /opt
     rm -f ${artifacts_directory}/yocto-state.tar.gz
 fi
 # copy previous fit image keys
 if [ -f ${artifacts_directory}/fit-keys.tar.gz ]; then
     echo "Extracting previous fit image keys..."
-    tar -xzf ${artifacts_directory}/fit-keys.tar.gz -C ${working_directory}
+    pv ${artifacts_directory}/fit-keys.tar.gz | tar -xzf - -C ${working_directory}
     rm -f ${artifacts_directory}/fit-keys.tar.gz
 fi
 
@@ -58,6 +58,6 @@ bitbake -k ${reference_image}
 if ! [ -d /opt/yocto-output ]; then
     mkdir /opt/yocto-output
 fi
-tar -czf /opt/yocto-output/yocto-state.tar.gz -C /opt yocto-state/
-tar -czf /opt/yocto-output/verdin-image.tar.gz -C ${working_directory} build/deploy/images/verdin-imx8mp/
-tar -czf /opt/yocto-output/fit-keys.tar.gz -C ${working_directory} build/keys/
+tar cf - -C /opt yocto-state/ | pv -s $(du -sb /opt/yocto-state | awk '{print $1}') | gzip > /opt/yocto-output/yocto-state.tar.gz
+tar cf - -C ${working_directory} build/deploy/images/verdin-imx8mp/ | pv -s $(du -sb ${working_directory}build/deploy/images/verdin-imx8mp | awk '{print $1}') | gzip > /opt/yocto-output/verdin-image.tar.gz
+tar cf - -C ${working_directory} build/keys/ | pv -s $(du -sb ${working_directory}/build/keys | awk '{print $1}') | gzip > /opt/yocto-output/fit-keys.tar.gz
