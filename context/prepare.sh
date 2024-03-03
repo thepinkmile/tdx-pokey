@@ -84,8 +84,7 @@ if [[ secure_boot -eq $true ]]; then
         mkdir ${cst_crts_root}
     fi
     if [ -f ${artifacts_directory}/cst.tar.gz ]; then
-        pv ${artifacts_directory}/cst.tar.gz | tar -xzf -C ${working_directory}
-        #tar -xzvf ${artifacts_directory}/cst.tar.gz -C ${working_directory}
+        pv ${artifacts_directory}/cst.tar.gz | tar -xzf - -C ${working_directory}
         mv -f ${artifacts_directory}/cst.tar.gz ${output_directory}/cst.tar.gz
     fi
     if ! [ -d ${cst_crts_root}/keys ]; then
