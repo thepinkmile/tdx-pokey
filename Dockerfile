@@ -53,16 +53,16 @@ RUN ~/.bin/repo sync -j1 --fail-fast
 # Copy scripts and make them executable
 COPY *.tgz /opt/tools
 COPY *.sh /opt/tools
-RUN sudo chmod a+wx /opt/tools/prepare.sh
-RUN sudo chmod a+wx /opt/tools/add_layer.sh
-RUN sudo chmod a+wx /opt/tools/build.sh
-RUN sudo chown $USERNAME /opt/tools/prepare.sh
-RUN sudo chown $USERNAME /opt/tools/add_layer.sh
-RUN sudo chown $USERNAME /opt/tools/build.sh
+RUN sudo chmod a+rwx /opt/tools/*.sh
+RUN sudo chmod a+rw /opt/tools/*.tgz
+RUN sudo chown $USERNAME:$USERNAME /opt/tools/*.sh
+RUN sudo chown $USERNAME:$USERNAME /opt/tools/*.tgz
 
 # Copy previous build artifacts
 RUN mkdir /opt/artifacts
 COPY *.tar.gz /opt/artifacts
+RUN sudo chmod a+rw /opt/artifacts/*.tar.gz
+RUN sudo chown $USERNAME:$USERNAME /opt/artifacts/*.tar.gz
 
 # Run environment setup script
 RUN ../tools/prepare.sh $PREP_ARGS
