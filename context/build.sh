@@ -52,12 +52,27 @@ if [ -f ${artifacts_directory}/fit-keys.tar.gz ]; then
 fi
 
 source export
-
-bitbake -k ${reference_image}
-
 if ! [ -d /opt/yocto-output ]; then
     mkdir /opt/yocto-output
 fi
+
+# Generate build graphs
+bitbake -g ${reference_image}
+if [ -d /opt/yocto-output/dot ]; then
+    rm -rf /opt/yocto-output/dot
+fi
+mkdir /opt/yocto-output/dot
+cp -f ${working_directory}/*.dot /opt/yocto-output/dot/
+cp -f ${working_directory}/pn-buildlist /opt/yocto-output/dot/
+pushd /opt/yocto-output/dot
+    dot -Tsvg package-depends.dot > package-depends.svg
+    dot -Tsvg pn-depends.dot > pn-depends.svg
+    dot -Tsvg task-depends.dot > task-depends.svg
+popd
+tar cf - -C /opt/yocto-output dot/ | pv -s $(du -sb /opt/yocto-output/dot | awk '{print $1}') | gzip > /opt/yocto-output/yocto-dot.tar.gz
+
+# Perform the build
+bitbake -k ${reference_image}
 tar cf - -C /opt yocto-state/ | pv -s $(du -sb /opt/yocto-state | awk '{print $1}') | gzip > /opt/yocto-output/yocto-state.tar.gz
 tar cf - -C ${working_directory} build/deploy/images/verdin-imx8mp/ | pv -s $(du -sb ${working_directory}build/deploy/images/verdin-imx8mp | awk '{print $1}') | gzip > /opt/yocto-output/verdin-image.tar.gz
 tar cf - -C ${working_directory} build/keys/ | pv -s $(du -sb ${working_directory}/build/keys | awk '{print $1}') | gzip > /opt/yocto-output/fit-keys.tar.gz

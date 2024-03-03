@@ -4,6 +4,7 @@ SET "WORKING_DIR=%~dp0"
 SET "GET_IMAGE=True"
 SET "GET_STATE=True"
 SET "GET_KEYS=True"
+SET "GET_GRAPHS=True"
 :Loop
 IF "%~1"=="" GOTO Continue
 	IF "%~1"=="--help" (
@@ -12,7 +13,7 @@ IF "%~1"=="" GOTO Continue
 		echo ### Retrieve Toradex build output script ###
 		echo ############################################
 		echo: 
-		echo .\get_yocto_state^.bat [--no-image] [--no-state] [--no-keys]
+		echo .\get_yocto_state^.bat [--no-image] [--no-state] [--no-keys] [--no-graphs]
 		echo:
 		echo   NOTE:
 		echo     This script will copy the following files:
@@ -28,6 +29,7 @@ IF "%~1"=="" GOTO Continue
 		echo --no-image: This will ignore exporting the image deploy output^.
 		echo --no-state: This will ignore exporting the build state output ^(useful as it can several GB in size^)^.
 		echo --no-keys: This will ignore exporting any generated keys and certificates ^(useful if not running a '--secure-boot' prepared environment^)^.
+		echo --no-graphs: This will ignore exporting any generated build dependency graphs^.
 		echo --help: Shows these help details^.
 		echo:
 		echo ############################################
@@ -39,6 +41,8 @@ IF "%~1"=="" GOTO Continue
 		SET "GET_STATE=False"
 	) ELSE IF "%~1"=="--no-keys" (
 		SET "GET_KEYS=False"
+	) ELSE IF "%~1"=="--no-graphs" (
+		SET "GET_GRAPHS=False"
 	)
 	SHIFT
 GOTO Loop
@@ -54,5 +58,8 @@ PUSHD %WORKING_DIR%
 	IF "%GET_KEYS%"=="True" (
 		docker cp tdx-builder:/opt/yocto-output/fit-keys.tar.gz ./output/
 		docker cp tdx-builder:/opt/yocto-output/cst.tar.gz ./context/
+	)
+	IF "%GET_GRAPHS%"=="True" (
+		docker cp tdx-builder:/opt/yocto-output/yocto-dot.tar.gz ./output/
 	)
 POPD
