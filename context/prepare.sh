@@ -63,7 +63,7 @@ if [[ secure_boot -eq $true ]]; then
     cst_crts_root=${working_directory}/cst
     
     if [ -f /opt/tools/IMX_CST_TOOL_NEW.tgz ]; then
-        tar -xzvf /opt/tools/IMX_CST_TOOL_NEW.tgz -C /opt/tools
+        tar -xzf /opt/tools/IMX_CST_TOOL_NEW.tgz -C /opt/tools
         mv /opt/tools/cst* ${cst_install_dir}
     else
         echo "No CST arcive found to extract. please add 'IMX_CST_TOOL_NEW.tgz' to the docker context folder to proceed."
@@ -79,7 +79,7 @@ if [[ secure_boot -eq $true ]]; then
         mkdir ${cst_crts_root}
     fi
     if [ -f ${artifacts_directory}/cst.tar.gz ]; then
-        tar -xzvf ${artifacts_directory}/cst.tar.gz -C ${working_directory}
+        tar -xzf ${artifacts_directory}/cst.tar.gz -C ${working_directory}
         mv -f ${artifacts_directory}/cst.tar.gz ${output_directory}/cst.tar.gz
     fi
     if ! [ -d ${cst_crts_root}/keys ]; then
@@ -107,7 +107,7 @@ if [[ secure_boot -eq $true ]]; then
 				rm -f *.bat
 				rm -f *.exe
 			popd
-			tar -czvf ${output_directory}/cst.tar.gz -C ${working_directory} cst
+			tar -czf ${output_directory}/cst.tar.gz -C ${working_directory} cst
         popd
     fi
     if ! grep -q "tdx-signed" "${config_directory}/local.conf"; then
