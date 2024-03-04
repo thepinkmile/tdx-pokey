@@ -74,5 +74,5 @@ tar cf - -C /opt/yocto-output dot/ | pv -s $(du -sb /opt/yocto-output/dot | awk 
 # Perform the build
 bitbake -k ${reference_image}
 tar cf - -C /opt yocto-state/ | pv -s $(du -sb /opt/yocto-state | awk '{print $1}') | gzip > /opt/yocto-output/yocto-state.tar.gz
-tar cf - -C ${working_directory} build/deploy/images/verdin-imx8mp/ | pv -s $(du -sb ${working_directory}build/deploy/images/verdin-imx8mp | awk '{print $1}') | gzip > /opt/yocto-output/verdin-image.tar.gz
+tar cf - -C ${working_directory} build/deploy/images/verdin-imx8mp/ | pv -s $(du -sb ${working_directory}/build/deploy/images/verdin-imx8mp | awk '{print $1}') | gzip > /opt/yocto-output/verdin-image.tar.gz
 tar cf - -C ${working_directory} build/keys/ | pv -s $(du -sb ${working_directory}/build/keys | awk '{print $1}') | gzip > /opt/yocto-output/fit-keys.tar.gz
