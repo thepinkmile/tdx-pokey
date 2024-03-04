@@ -62,11 +62,11 @@ if [ -d /opt/yocto-output/dot ]; then
     rm -rf /opt/yocto-output/dot
 fi
 mkdir /opt/yocto-output/dot
-cp -f ${working_directory}/*.dot /opt/yocto-output/dot/
-cp -f ${working_directory}/pn-buildlist /opt/yocto-output/dot/
+cp -f ${working_directory}/build/*.dot /opt/yocto-output/dot/
+cp -f ${working_directory}/build/pn-buildlist /opt/yocto-output/dot/
 pushd /opt/yocto-output/dot
-    dot -Tsvg package-depends.dot > package-depends.svg
-    dot -Tsvg pn-depends.dot > pn-depends.svg
+    #dot -Tsvg package-depends.dot > package-depends.svg
+    #dot -Tsvg pn-depends.dot > pn-depends.svg
     dot -Tsvg task-depends.dot > task-depends.svg
 popd
 tar cf - -C /opt/yocto-output dot/ | pv -s $(du -sb /opt/yocto-output/dot | awk '{print $1}') | gzip > /opt/yocto-output/yocto-dot.tar.gz
