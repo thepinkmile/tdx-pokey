@@ -6,14 +6,10 @@ working_directory=$PWD
 artifacts_directory=${path}/../artifacts
 cst_crts_root=${working_directory}/cst
 reference_image=tdx-reference-minimal-image
+build_graph=$false
 
 while [[ $# -gt 0 ]]; do
     case $1 in
-        --image)
-            shift
-            echo "Setting image: $1"
-            reference_image=$1
-            ;;
         --help)
             echo "##################################"
             echo "### Toradex yocto build script ###"
@@ -26,6 +22,14 @@ while [[ $# -gt 0 ]]; do
             echo ""
             echo "##################################"
             exit 0
+            ;;
+        --image)
+            shift
+            echo "Setting image: $1"
+            reference_image=$1
+            ;;
+        --graph)
+            build_graph=$true
             ;;
         *)
             echo "Unknown argument: $1"
@@ -57,18 +61,18 @@ if ! [ -d /opt/yocto-output ]; then
 fi
 
 # Generate build graphs
-bitbake -g ${reference_image}
+bitbake -g -I virtual/kernel -I eglibc ${reference_image}
 if [ -d /opt/yocto-output/dot ]; then
     rm -rf /opt/yocto-output/dot
 fi
 mkdir /opt/yocto-output/dot
 cp -f ${working_directory}/build/*.dot /opt/yocto-output/dot/
 cp -f ${working_directory}/build/pn-buildlist /opt/yocto-output/dot/
-pushd /opt/yocto-output/dot
-    #dot -Tsvg package-depends.dot > package-depends.svg
-    #dot -Tsvg pn-depends.dot > pn-depends.svg
-    dot -Tsvg task-depends.dot > task-depends.svg
-popd
+if [[ ${build_graph} ]]; then
+    pushd /opt/yocto-output/dot
+        dot -Tsvg -O task-depends.dot
+    popd
+fi
 tar cf - -C /opt/yocto-output dot/ | pv -s $(du -sb /opt/yocto-output/dot | awk '{print $1}') | gzip > /opt/yocto-output/yocto-dot.tar.gz
 
 # Perform the build
